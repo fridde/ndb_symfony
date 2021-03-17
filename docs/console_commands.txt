@@ -1,0 +1,8 @@
+con make:migration
+con doctrine:migrations:migrate
+
+con doctrine:fixtures:load
+
+con make:admin:crud
+
+con debug:router

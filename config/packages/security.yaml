@@ -1,0 +1,39 @@
+security:
+    providers:
+        users:
+            entity:
+                class: 'App\Entity\User'
+                property: 'Mail'
+
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+            lazy: true
+            logout:
+                path: app_logout
+
+            guard:
+                authenticators:
+                    - App\Security\AuthKeyAuthenticator
+                    - App\Security\AzureAuthenticator
+                entry_point: App\Security\AuthKeyAuthenticator
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+    role_hierarchy:
+        ROLE_CONFIRMED_USER: ROLE_PENDING_USER
+        ROLE_SCHOOL_ADMIN: ROLE_CONFIRMED_USER
+        ROLE_ADMIN: ROLE_SCHOOL_ADMIN

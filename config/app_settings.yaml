@@ -1,0 +1,39 @@
+parameters:
+  app_settings:
+    segments:
+      2: 'åk 2/3'     # the first denotes the default segment in views
+      5: 'åk 5'
+      9: 'åk 9'
+      fri: 'Fritids'
+      fbk: 'FBK'
+
+    addresses:
+      food: 'peter.linden@sigtuna.se'
+      bus: 'info@elleniusbuss.se'
+    admin_summary:
+      # time before a non-confirmed visit shows up in the mail
+      no_confirmation_warning: [5, d]
+      # time until the last visit before a warning is issued
+      soon_last_visit: [60, d]
+      # time within which a warning will be issued if a bus or food is not ordered and confirmed
+      missing_bus_warning: [3, w]
+      missing_food_warning: [17, d]
+      # time to next visit within which a warning is issued if number of
+      # students or food restrictions are changed
+      important_info_changed: [21, d]
+      # minimum and maximum number of students in a group. If not in this range, a warning is issued
+      allowed_group_size: [5, 35]
+
+    user_reminder:
+      # time after user creation until reminders are sent
+      immunity_time: [9, d]
+      # interval between reminders
+      annoyance_interval: [4, d]
+      # time before a visit when confirmation messages will be sent (until confirmed)
+      visit_confirmation_time: [14, d]
+
+    slack:
+      webhook_url: 'https://hooks.slack.com/services/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'
+      username: 'Naturskolans databas'
+      channel: '#errors_from_ndb'
+
