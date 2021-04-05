@@ -10,8 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repository\GroupRepository")
  * @ORM\Table(name="groups")
  */
-class Group
+class Group implements \JsonSerializable
 {
+    use DefaultSerializable;
+
+    public array $standard_members = ['id', 'Name', 'Segment', 'StartYear', 'NumberStudents', 'Info'];
+
     /** @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
@@ -26,13 +30,16 @@ class Group
      */
     protected User $User;
 
-    /** @ORM\ManyToOne(targetEntity="School", inversedBy="Groups")     * */
+    /** @ORM\ManyToOne(targetEntity="School", inversedBy="Groups")
+     */
     protected School $School;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string", nullable=true)
+     */
     protected ?string $Segment;
 
-    /** @ORM\Column(type="smallint", nullable=true) */
+    /** @ORM\Column(type="smallint", nullable=true)
+     */
     protected ?int $StartYear;
 
     /** @ORM\Column(type="smallint", nullable=true)
@@ -47,10 +54,12 @@ class Group
      */
     protected ?string $Info;
 
-    /** @ORM\Column(type="smallint") */
+    /** @ORM\Column(type="smallint")
+     */
     protected int $Status = self::ACTIVE;
 
-    /** @ORM\OneToMany(targetEntity="Visit", mappedBy="Group") */
+    /** @ORM\OneToMany(targetEntity="Visit", mappedBy="Group")
+     */
     protected Collection $Visits;
 
     public const ARCHIVED = 0;
@@ -64,7 +73,7 @@ class Group
         $this->Visits = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $s = '[' . strtoupper($this->getSchool()->getId()) . ':';
         $s .= $this->getSegment() . '] ' . $this->getName();
@@ -73,165 +82,115 @@ class Group
     }
 
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string|null
-     */
+
     public function getName(): ?string
     {
         return $this->Name;
     }
 
-    /**
-     * @param string|null $Name
-     */
+
     public function setName(?string $Name): void
     {
         $this->Name = $Name;
     }
 
-    /**
-     * @return User
-     */
      public function getUser(): User
     {
         return $this->User;
     }
 
-    /**
-     * @param User $User
-     */
     public function setUser(User $User): void
     {
         $this->User = $User;
     }
 
-    /**
-     * @return School
-     */
     public function getSchool(): School
     {
         return $this->School;
     }
 
-    /**
-     * @param School $School
-     */
     public function setSchool(School $School): void
     {
         $this->School = $School;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSegment(): ?string
     {
         return $this->Segment;
     }
 
-    /**
-     * @param string|null $Segment
-     */
     public function setSegment(?string $Segment): void
     {
         $this->Segment = $Segment;
     }
 
-    /**
-     * @return int
-     */
     public function getStartYear(): ?int
     {
         return $this->StartYear;
     }
 
-    /**
-     * @param int|null $StartYear
-     */
     public function setStartYear(?int $StartYear): void
     {
         $this->StartYear = $StartYear;
     }
 
-    /**
-     * @return int
-     */
     public function getNumberStudents(): ?int
     {
         return $this->NumberStudents;
     }
 
-    /**
-     * @param int|null $NumberStudents
-     */
     public function setNumberStudents(?int $NumberStudents): void
     {
         $this->NumberStudents = $NumberStudents;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFood(): ?string
     {
         return $this->Food;
     }
 
-    /**
-     * @param string|null $Food
-     */
     public function setFood(?string $Food): void
     {
         $this->Food = $Food;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInfo(): ?string
     {
         return $this->Info;
     }
 
-    /**
-     * @param string|null $Info
-     */
-    public function setInfo(?string $Info): void
+     public function setInfo(?string $Info): void
     {
         $this->Info = $Info;
     }
 
-    /**
-     * @return int
-     */
     public function getStatus(): int
     {
         return $this->Status;
     }
 
-    /**
-     * @param int $Status
-     */
     public function setStatus(int $Status): void
     {
         $this->Status = $Status;
     }
 
 
+    public function jsonSerialize(): array
+    {
+        $return = $this->getStandardMembers();
+
+        $return['School'] = $this->getSchool()->getId();
+
+        return $return;
+    }
 }

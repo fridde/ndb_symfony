@@ -25,6 +25,9 @@ class SchoolVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
+        if($user->isAdmin()){
+            return true;
+        }
         /** @var School $school  */
         $school = $subject;
 

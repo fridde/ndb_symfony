@@ -26,6 +26,7 @@ class AzureAuthenticator extends AbstractGuardAuthenticator
     private AuthenticationUtils $auth;
     private ClientRegistry $client_registry;
     private UrlGeneratorInterface $router;
+    private LoggerInterface $logger;
 
     private array $user_data;
 
@@ -33,14 +34,15 @@ class AzureAuthenticator extends AbstractGuardAuthenticator
         EntityManagerInterface $em,
         AuthenticationUtils $auth,
         ClientRegistry $clientRegistry,
-        UrlGeneratorInterface $router
-
+        UrlGeneratorInterface $router,
+        LoggerInterface $logger
     )
     {
         $this->em = $em;
         $this->auth = $auth;
         $this->client_registry = $clientRegistry;
         $this->router = $router;
+        $this->logger = $logger;
     }
 
 
@@ -62,6 +64,8 @@ class AzureAuthenticator extends AbstractGuardAuthenticator
 
         try {
             $token = $client->getAccessToken();
+            //dd($token);
+            $this->logger->info($token);
             $potential_user_data = $provider->get('me', $token);
 
             $this->setRelevantUserData($potential_user_data);

@@ -11,8 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repository\SchoolRepository")
  * @ORM\Table(name="schools")
  */
-class School
+class School implements \JsonSerializable
 {
+    use DefaultSerializable;
+
+    public array $standard_members = ['id', 'Name', 'Status', 'BusRule', 'FoodRule', 'Status'];
+
     /** @ORM\Id
      * @ORM\Column(type="string")
      */
@@ -56,7 +60,7 @@ class School
         $this->Users = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getName();
     }
@@ -187,7 +191,7 @@ class School
         return $this->Users->toArray();
     }
 
-    public function addUser($User)
+    public function addUser($User): void
     {
         $this->Users->add($User);
     }
@@ -251,5 +255,12 @@ class School
             fn($c) => str_starts_with($c, 'FOOD'),
             ARRAY_FILTER_USE_KEY
         );
+    }
+
+    public function jsonSerialize()
+    {
+        $return = $this->getStandardMembers();
+
+        return $return;
     }
 }

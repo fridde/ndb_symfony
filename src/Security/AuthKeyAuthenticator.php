@@ -12,19 +12,19 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use App\Security\AuthenticationUtils as Auth;
+use App\Security\AuthenticationUtils as AuthUtil;
 
 class AuthKeyAuthenticator extends AbstractGuardAuthenticator
 {
-    private Auth $auth;
+    private AuthUtil $AuthUtil;
     private UrlGeneratorInterface $router;
 
     public function __construct(
-        Auth $auth,
+        AuthUtil $AuthUtil,
         UrlGeneratorInterface $router
     )
     {
-        $this->auth = $auth;
+        $this->AuthUtil = $AuthUtil;
         $this->router = $router;
     }
 
@@ -39,22 +39,26 @@ class AuthKeyAuthenticator extends AbstractGuardAuthenticator
 
     public function supports(Request $request): bool
     {
-        return $request->cookies->has(Auth::COOKIE_KEY_NAME);
+        if($request->attributes->get('_route') === 'connect_azure_check'){
+            // we don't to end up in a loop of "bad but existing cookie" -> check microsoft login -> come back and cookie is checked again and rejected
+            return false;
+        }
+        return $request->cookies->has(AuthUtil::COOKIE_KEY_NAME);
     }
 
     public function getCredentials(Request $request): string
     {
-        return $request->cookies->get(Auth::COOKIE_KEY_NAME);
+        return $request->cookies->get(AuthUtil::COOKIE_KEY_NAME);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
-        return $this->auth->getUserFromAuthKey($credentials);
+        return $this->AuthUtil->getUserFromAuthKey($credentials);
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        return $this->auth->authKeyMatchesUser($user, $credentials);
+        return $this->AuthUtil->authKeyMatchesUser($user, $credentials);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

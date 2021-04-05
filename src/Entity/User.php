@@ -8,29 +8,39 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ReflectionClass;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="users")
  */
-class User implements UserInterface
+class User implements UserInterface, \JsonSerializable
 {
+    use DefaultSerializable;
+
+    public array $standard_members = ['id', 'FirstName', 'LastName', 'Mobil', 'Mail', 'Acronym'];
+
     /** @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     protected int $id;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected ?string $FirstName;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string", nullable=true)
+     */
     protected ?string $LastName;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string", nullable=true)
+     */
     protected ?string $Mobil;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string", nullable=true)
+     */
     protected ?string $Mail;
 
     /** @ORM\ManyToOne(targetEntity="School", inversedBy="Users")     * */
@@ -39,14 +49,17 @@ class User implements UserInterface
     /** @ORM\Column(type="smallint", nullable=true) */
     protected ?int $Role;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string", nullable=true)
+     * @Groups({"basic"})
+     */
     protected ?string $Acronym;
 
-    /** @ORM\Column(type="smallint") */
+    /** @ORM\Column(type="smallint")
+     */
     protected int $Status = 1;
 
     /** @ORM\Column(type="datetime")
-     *  @Gedmo\Timestampable(on="create")
+     * @Gedmo\Timestampable(on="create")
      */
     protected \DateTime $Created;
 
@@ -79,65 +92,41 @@ class User implements UserInterface
         $this->Notes = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstName(): ?string
     {
         return $this->FirstName;
     }
 
-    /**
-     * @param string|null $FirstName
-     */
     public function setFirstName(?string $FirstName): void
     {
         $this->FirstName = $FirstName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastName(): ?string
     {
         return $this->LastName;
     }
 
-    /**
-     * @param string|null $LastName
-     */
     public function setLastName(?string $LastName): void
     {
         $this->LastName = $LastName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMobil(): ?string
     {
         return $this->Mobil;
     }
 
-    /**
-     * @param string|null $Mobil
-     */
     public function setMobil(?string $Mobil): void
     {
         $this->Mobil = $Mobil;
@@ -148,25 +137,16 @@ class User implements UserInterface
         return !empty($this->getMobil());
     }
 
-    /**
-     * @return string|null
-     */
     public function getMail(): ?string
     {
         return $this->Mail;
     }
 
-    /**
-     * @param string|null $Mail
-     */
     public function setMail(?string $Mail): void
     {
         $this->Mail = strtolower(trim($Mail));
     }
 
-    /**
-     * @return School
-     */
     public function getSchool(): School
     {
         return $this->School;
@@ -177,25 +157,16 @@ class User implements UserInterface
         return $this->getSchool()->getId();
     }
 
-    /**
-     * @param School $School
-     */
     public function setSchool(School $School): void
     {
         $this->School = $School;
     }
 
-    /**
-     * @return int|null
-     */
     public function getRole(): ?int
     {
         return $this->Role;
     }
 
-    /**
-     * @param int|null $Role
-     */
     public function setRole(?int $Role): void
     {
         $this->Role = $Role;
@@ -219,33 +190,21 @@ class User implements UserInterface
         return $this->getRole() === self::ROLE_PENDING_USER;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAcronym(): ?string
     {
         return $this->Acronym;
     }
 
-    /**
-     * @param string|null $Acronym
-     */
     public function setAcronym(?string $Acronym): void
     {
         $this->Acronym = $Acronym;
     }
 
-    /**
-     * @return int
-     */
     public function getStatus(): int
     {
         return $this->Status;
     }
 
-    /**
-     * @param int $Status
-     */
     public function setStatus(int $Status): void
     {
         $this->Status = $Status;
@@ -294,6 +253,11 @@ class User implements UserInterface
         );
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->getRole() === self::ROLE_ADMIN;
+    }
+
     public function getPassword(): ?string
     {
         return null;
@@ -311,5 +275,14 @@ class User implements UserInterface
 
     public function eraseCredentials(): void
     {
+    }
+
+    public function jsonSerialize(): array
+    {
+        $return = $this->getStandardMembers();
+
+        $return['School'] = $this->getSchoolId();
+
+        return $return;
     }
 }

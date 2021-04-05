@@ -14,12 +14,16 @@ use Symfony\Component\Routing\Annotation\Route;
 ]
 class SchoolPageController extends AbstractController
 {
-    /**
-     * @Route("/skola/{school}", name="school_overview")
-     */
+    #[Route(
+        '/skola/{school}',
+        name: 'school_overview',
+        methods: ['GET']
+    )]
     public function schoolOverview(School $school): Response
     {
         dump($school);
         return $this->render('base.html.twig');
     }
+
+
 }

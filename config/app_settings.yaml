@@ -33,7 +33,7 @@ parameters:
       visit_confirmation_time: [14, d]
 
     slack:
-      webhook_url: 'https://hooks.slack.com/services/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'
+      #webhook_url: 'https://hooks.slack.com/services/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'
       username: 'Naturskolans databas'
       channel: '#errors_from_ndb'
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\Filterable;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,8 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repository\VisitRepository")
  * @ORM\Table(name="visits")
  */
-class Visit
+class Visit implements \JsonSerializable
 {
+    use DefaultSerializable;
+
+    public array $standard_members = ['id', 'Time', 'Status', 'BusIsBooked', 'FoodIsBooked'];
+
     /** @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
@@ -267,4 +272,10 @@ class Visit
     }
 
 
+    public function jsonSerialize()
+    {
+        $return = $this->getStandardMembers();
+
+        return $return;
+    }
 }

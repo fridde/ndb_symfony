@@ -43,4 +43,12 @@ class SandboxController extends AbstractController
         $a = $settings->get('admin_summary.soon_last_visit');
         return $this->render('base.html.twig');
     }
+
+    #[Route(
+        '/sandbox/update'
+    )]
+    public function testUpdate(): Response
+    {
+        return $this->render('tests.html.twig');
+    }
 }

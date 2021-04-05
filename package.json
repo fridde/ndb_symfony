@@ -12,5 +12,10 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "jquery": "^3.6.0",
+        "jqueryui": "^1.11.1",
+        "uikit": "^3.6.18"
     }
 }
