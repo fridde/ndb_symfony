@@ -69,7 +69,7 @@ class ApiController extends AbstractController
     public function updateUsers(): JsonResponse
     {
         $this->updateMultipleEntities(User::class);
-        return $this->customJson("Was updated"); // TODO: Implement update
+        return $this->customJson(['success' => true]); // TODO: Implement update
     }
 
 
@@ -265,24 +265,25 @@ class ApiController extends AbstractController
 
     private function updateMultipleEntities(string $class_name, array $entities = null): void
     {
-        $entities ??= $this->request->get('data', []);
+        $entities ??= $this->request->get('updates', []);
         $repo = $this->em->getRepository($class_name);
 
-        foreach($entities as $id => $entity_data){
+        foreach ($entities as $id => $entity_data) {
             $entity = $repo->find($id);
             $this->updateSingleEntity($entity, $entity_data);
         }
+        $this->em->flush();
     }
 
 
-    private function updateEntityData($e, $data = null): void
+    private function updateEntityData($e, array $data = null): void
     {
-        $data ??= $this->request->get('data', []);
+        $data ??= $this->request->get('updates', []);
         $this->updateSingleEntity($e, $data);
         $this->em->flush();
     }
 
-    private function updateSingleEntity(Entity $e, array $data = []): void
+    private function updateSingleEntity($e, array $data = []): void
     {
         foreach ($data as $attribute => $new_value) {
             $set_method = 'set' . ucfirst($attribute);
@@ -299,7 +300,6 @@ class ApiController extends AbstractController
 
         $criteria = $repo->getFilterCriteria($filter);
         /** @var EntityRepository $repo */
-
 
         return $repo->matching($criteria)->toArray();
     }

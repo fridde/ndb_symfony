@@ -14,6 +14,7 @@ use App\Entity\Topic;
 use App\Entity\User;
 use App\Entity\Visit;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -75,7 +76,7 @@ class AppFixtures extends Fixture
                 $this->om->persist($entity);
 
                 $metadata = $this->om->getClassMetaData(get_class($entity));
-                $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
+                $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
             }
             $this->om->flush();
 
@@ -168,7 +169,7 @@ class AppFixtures extends Fixture
 
     private static function isIgnored(string $field_or_title): bool
     {
-        return strpos($field_or_title, '_ignore') !== false;
+        return str_contains($field_or_title, '_ignore');
     }
 
     private function setShortToLongArray(): void

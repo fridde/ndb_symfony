@@ -2,52 +2,50 @@
 
 namespace App\Entity;
 
+use App\Repository\SchoolRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\SchoolRepository")
- * @ORM\Table(name="schools")
- */
+
+#[ORM\Entity(repositoryClass: SchoolRepository::class), ORM\Table(name: "schools")]
 class School implements \JsonSerializable
 {
     use DefaultSerializable;
 
     public array $standard_members = ['id', 'Name', 'Status', 'BusRule', 'FoodRule', 'Status'];
 
-    /** @ORM\Id
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Id, ORM\Column]
     protected string $id;
 
-    /** @ORM\Column(type="string") */
+    #[ORM\Column]
     protected string $Name;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    #[ORM\Column(nullable: true)]
     protected ?string $Coordinates;
 
-    /** @ORM\Column(type="smallint") */
+    #[ORM\Column(type: Types::SMALLINT)]
     protected int $VisitOrder;
 
-    /** @ORM\Column(type="integer", options={"default" : 0}) */
+    #[ORM\Column(options: array("default" => 0))]
     protected int $BusRule = 0;
 
-    /** @ORM\Column(type="smallint", options={"default" : 1}) */
+    #[ORM\Column(type: Types::SMALLINT, options: array("default" => 1))]
     protected int $FoodRule = 1;
 
-    /** @ORM\Column(type="smallint") */
+    #[ORM\Column(type: Types::SMALLINT)]
     protected int $Status = 1;
 
-    /** @ORM\OneToMany(targetEntity="Group", mappedBy="School")
-     * @ORM\OrderBy({"Name" = "ASC"})
-     **/
+
+    #[ORM\OneToMany(mappedBy: "School", targetEntity: Group::class)]
+    #[ORM\OrderBy(array("Name" => "ASC"))]
     protected Collection $Groups;
 
-    /** @ORM\OneToMany(targetEntity="User", mappedBy="School")
-     * * @ORM\OrderBy({"FirstName" = "ASC"})
-     */
+
+    #[ORM\OneToMany(mappedBy: "School", targetEntity: User::class)]
+    #[ORM\OrderBy(array("FirstName" => "ASC"))]
     protected Collection $Users;
 
     public const FOOD_NONE = 0;

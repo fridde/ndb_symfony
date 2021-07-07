@@ -17,14 +17,15 @@ class UserRepository extends EntityRepository
         'active' => 'isActive'
     ];
 
-    /** @noinspection NullPointerExceptionInspection */
+
     public function isActive(bool $active): void
     {
-        $status = (int) $active;
-        $exp = Criteria::expr()->eq('Status', $status);
-        $this->criteria->andWhere($exp);
+        $status = (int)$active;
+        $exp = Criteria::expr()?->eq('Status', $status);
+        if ($exp !== null) {
+            $this->criteria->andWhere($exp);
+        }
     }
-
 
 
 }

@@ -2,81 +2,65 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ReflectionClass;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="users")
- */
+
+#[ORM\Entity(repositoryClass: UserRepository::class), ORM\Table(name: "users")]
 class User implements UserInterface, \JsonSerializable
 {
     use DefaultSerializable;
 
     public array $standard_members = ['id', 'FirstName', 'LastName', 'Mobil', 'Mail', 'Acronym'];
 
-    /** @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     */
+    #[ORM\Id, ORM\Column, ORM\GeneratedValue]
     protected int $id;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $FirstName;
 
-    /** @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $LastName;
 
-    /** @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $Mobil;
 
-    /** @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $Mail;
 
-    /** @ORM\ManyToOne(targetEntity="School", inversedBy="Users")     * */
+    #[ORM\ManyToOne(inversedBy: "Users")]
     protected School $School;
 
-    /** @ORM\Column(type="smallint", nullable=true) */
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     protected ?int $Role;
 
-    /** @ORM\Column(type="string", nullable=true)
-     * @Groups({"basic"})
-     */
+    #[ORM\Column(nullable: true), Groups(array("basic"))]
     protected ?string $Acronym;
 
-    /** @ORM\Column(type="smallint")
-     */
+    #[ORM\Column(type: Types::SMALLINT)]
     protected int $Status = 1;
 
-    /** @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="create")
-     */
+    // TODO: Implement timestampable Gedmo on=create
+    #[ORM\Column]
     protected \DateTime $Created;
 
-    /** @ORM\OneToMany(targetEntity="Group", mappedBy="User")
-     */
+    #[ORM\OneToMany(mappedBy: "User", targetEntity: Group::class)]
     protected Collection $Groups;
 
-    /** @ORM\ManyToMany(targetEntity="Visit", mappedBy="Colleagues")
-     */
+    #[ORM\ManyToMany(targetEntity: Visit::class, mappedBy: "Colleagues")]
     protected Collection $Visits;
 
-    /** @ORM\OneToMany(targetEntity="Message", mappedBy="User")
-     */
+    #[ORM\OneToMany(mappedBy: "User", targetEntity: Message::class)]
     protected Collection $Messages;
 
-    /** @ORM\OneToMany(targetEntity="Note", mappedBy="User")
-     */
+    #[ORM\OneToMany(mappedBy: "User", targetEntity: Note::class)]
     protected Collection $Notes;
 
     public const ROLE_PENDING_USER = 0;
@@ -284,5 +268,12 @@ class User implements UserInterface, \JsonSerializable
         $return['School'] = $this->getSchoolId();
 
         return $return;
+    }
+
+
+    /** Necessary to implement Symfony\Component\Security\Core\User\UserInterface   */
+    public function getUserIdentifier(): string
+    {
+        return $this->getMail();
     }
 }

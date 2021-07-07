@@ -2,72 +2,52 @@
 
 namespace App\Entity;
 
+use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\GroupRepository")
- * @ORM\Table(name="groups")
- */
+#[ORM\Entity(repositoryClass: GroupRepository::class), ORM\Table(name: "groups")]
 class Group implements \JsonSerializable
 {
     use DefaultSerializable;
 
     public array $standard_members = ['id', 'Name', 'Segment', 'StartYear', 'NumberStudents', 'Info'];
 
-    /** @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     */
+    #[ORM\Id, ORM\Column, ORM\GeneratedValue]
     protected int $id;
 
-    /** @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $Name;
 
-    /** @ORM\ManyToOne(targetEntity="User", inversedBy="Groups")
-     */
+    #[ORM\ManyToOne(inversedBy: "Groups")]
     protected User $User;
 
-    /** @ORM\ManyToOne(targetEntity="School", inversedBy="Groups")
-     */
+    #[ORM\ManyToOne(inversedBy: "Groups")]
     protected School $School;
 
-    /** @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $Segment;
 
-    /** @ORM\Column(type="smallint", nullable=true)
-     */
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     protected ?int $StartYear;
 
-    /** @ORM\Column(type="smallint", nullable=true)
-     */
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     protected ?int $NumberStudents;
 
-    /** @ORM\Column(type="text", nullable=true)
-     */
-    protected ?string $Food;
-
-    /** @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     protected ?string $Info;
 
-    /** @ORM\Column(type="smallint")
-     */
+    #[ORM\Column(type: Types::SMALLINT)]
     protected int $Status = self::ACTIVE;
 
-    /** @ORM\OneToMany(targetEntity="Visit", mappedBy="Group")
-     */
+    #[ORM\OneToMany(mappedBy: "Group", targetEntity: Visit::class)]
     protected Collection $Visits;
 
     public const ARCHIVED = 0;
     public const ACTIVE = 1;
 
-    /**
-     * Group constructor.
-     */
     public function __construct()
     {
         $this->Visits = new ArrayCollection();
@@ -152,16 +132,6 @@ class Group implements \JsonSerializable
     public function setNumberStudents(?int $NumberStudents): void
     {
         $this->NumberStudents = $NumberStudents;
-    }
-
-    public function getFood(): ?string
-    {
-        return $this->Food;
-    }
-
-    public function setFood(?string $Food): void
-    {
-        $this->Food = $Food;
     }
 
     public function getInfo(): ?string

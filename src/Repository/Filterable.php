@@ -28,10 +28,15 @@ trait Filterable
     }
 
 
+    /** will convert the criteria array given in the json-request (example)
+     * ["isOldEnough", "hasMobile" => "false", "isYoungerThan" => 65]
+     * to a standardized form of
+     * ["isOldEnough" => true, "hasMobile" => false, "isYoungerThan" => 65]
+     */
     public static function standardizeFilterParameters(array $filter = []): array
     {
         [$keys, $values] = [array_keys($filter), array_values($filter)];
-        $booleans = ['true' => true, 'false' => false];
+        $booleans = [0 => false, 1 => true, 'false' => false, 'true' => true];
 
         foreach ($keys as $k => $v) {
             if (is_numeric($v)) {

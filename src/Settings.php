@@ -10,9 +10,7 @@ class Settings
 {
     private const SETTINGS_INDEX = 'app_settings';
 
-    private ParameterBagInterface $params;
-
-    private array $settings = [];
+    private array $settings;
 
     /**
      * Settings constructor.

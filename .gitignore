@@ -1,4 +1,5 @@
 /.idea/
+php_errors.log
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -26,3 +27,4 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+

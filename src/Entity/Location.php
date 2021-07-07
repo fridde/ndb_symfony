@@ -2,37 +2,32 @@
 
 namespace App\Entity;
 
+use App\Repository\LocationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\LocationRepository")
- * @ORM\Table(name="locations")
- */
+
+#[ORM\Entity(repositoryClass: LocationRepository::class), ORM\Table(name: "locations")]
 class Location
 {
-    /** @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     */
+    #[ORM\Id, ORM\Column, ORM\GeneratedValue]
     protected int $id;
 
-    /** @ORM\Column(type="string") */
+    #[ORM\Column]
     protected string $Name;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    #[ORM\Column(nullable: true)]
     protected ?string $Coordinates;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    #[ORM\Column(nullable: true)]
     protected ?string $Description;
 
-    /** @ORM\Column(type="smallint", unique=true)
-     * @ORM\GeneratedValue
-     */
+    #[ORM\Column(type: Types::SMALLINT, unique: true), ORM\GeneratedValue]
     protected int $BusId;
 
-    /** @ORM\OneToMany(targetEntity="Topic", mappedBy="Location") */
+    #[ORM\OneToMany(mappedBy: "Location", targetEntity: Topic::class)]
     protected Collection $Topics;
 
 
@@ -41,81 +36,60 @@ class Location
         $this->Topics = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
+
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
+
     public function getName(): string
     {
         return $this->Name;
     }
 
-    /**
-     * @param string $Name
-     */
+
     public function setName(string $Name): void
     {
         $this->Name = $Name;
     }
 
-    /**
-     * @return string|null
-     */
+
     public function getCoordinates(): ?string
     {
         return $this->Coordinates;
     }
 
-    /**
-     * @param string|null $Coordinates
-     */
+
     public function setCoordinates(?string $Coordinates): void
     {
         $this->Coordinates = $Coordinates;
     }
 
-    /**
-     * @return string|null
-     */
+
     public function getDescription(): ?string
     {
         return $this->Description;
     }
 
-    /**
-     * @param string|null $Description
-     */
+
     public function setDescription(?string $Description): void
     {
         $this->Description = $Description;
     }
 
-    /**
-     * @return int
-     */
+
     public function getBusId(): int
     {
         return $this->BusId;
     }
 
-    /**
-     * @param int $BusId
-     */
+
     public function setBusId(int $BusId): void
     {
         $this->BusId = $BusId;

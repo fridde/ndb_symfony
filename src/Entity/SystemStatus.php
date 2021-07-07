@@ -4,18 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="systemstatus")
- */
+#[ORM\Entity, ORM\Table(name: "systemstatus")]
 class SystemStatus
 {
-    /** @ORM\Id
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Id, ORM\Column]
     protected string $id;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    #[ORM\Column(nullable: true)]
     protected ?string $Value;
 
     public function getId(): string

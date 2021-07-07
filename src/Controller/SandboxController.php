@@ -5,6 +5,8 @@ namespace App\Controller;
 
 
 use App\Settings;
+use App\Utils\Calendar;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -50,5 +52,14 @@ class SandboxController extends AbstractController
     public function testUpdate(): Response
     {
         return $this->render('tests.html.twig');
+    }
+
+    #[Route(
+        'sandbox/calendar'
+    )]
+    public function testCalendar(Calendar $calendar)
+    {
+        $calendar->insertEvent();
+        return $this->render('base.html.twig');
     }
 }
