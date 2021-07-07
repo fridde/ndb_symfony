@@ -205,6 +205,9 @@
     "phpoffice/phpspreadsheet": {
         "version": "1.14.1"
     },
+    "phpseclib/phpseclib": {
+        "version": "3.0.9"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
