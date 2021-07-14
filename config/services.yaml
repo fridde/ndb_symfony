@@ -34,3 +34,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Utils\Maintenance:
+        arguments:
+            $db_name: '%env(string:DATABASE_NAME)%'
+            $username: '%env(string:DATABASE_USER)%'
+            $password: '%env(string:DATABASE_PASSWORD)%'

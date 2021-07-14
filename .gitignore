@@ -1,5 +1,7 @@
 /.idea/
 php_errors.log
+paths.yaml
+backup/
 
 ###> symfony/framework-bundle ###
 /.env.local
